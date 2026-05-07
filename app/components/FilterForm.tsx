@@ -126,18 +126,62 @@ export default function FilterForm({ filters, onChange, onSearch }: Props) {
       {/* Row 2: Field Selection */}
       <div style={{ position: 'relative', zIndex: 1, marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-          <label style={labelStyle}>Field of Study
-            {filters.selectedFields.length > 0 && (
-              <span style={{ marginLeft: 8, background: N.blueBright, color: '#fff', borderRadius: 50, padding: '1px 8px', fontSize: 10 }}>
-                {filters.selectedFields.length} selected
-              </span>
-            )}
-          </label>
-          <button onClick={() => setShowFields(!showFields)}
-            style={{ fontSize: 11, color: N.blueBright, fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
-            {showFields ? 'Hide ▲' : 'Show All ▼'}
-          </button>
-        </div>
+  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <label style={{ ...labelStyle, marginBottom: 0 }}>Field of Study</label>
+    {filters.selectedFields.length === 0 && !showFields && (
+      <span style={{
+        fontSize: 10, color: '#64748b', fontWeight: 600,
+        background: 'rgba(100,116,139,0.08)',
+        padding: '2px 8px', borderRadius: 50,
+        border: '1px solid rgba(100,116,139,0.18)',
+      }}>
+        Optional
+      </span>
+    )}
+    {filters.selectedFields.length > 0 && (
+      <span style={{
+        fontSize: 10, background: N.blueBright, color: '#fff',
+        borderRadius: 50, padding: '2px 9px', fontWeight: 800,
+      }}>
+        {filters.selectedFields.length} selected
+      </span>
+    )}
+  </div>
+
+  <motion.button
+    onClick={() => setShowFields(!showFields)}
+    whileHover={{ scale: 1.04 }}
+    whileTap={{ scale: 0.96 }}
+    style={{
+      display: 'flex', alignItems: 'center', gap: 7,
+      padding: '7px 16px', borderRadius: 50, cursor: 'pointer',
+      fontFamily: 'inherit', border: 'none',
+      background: showFields
+        ? `linear-gradient(135deg, ${N.navyMid}, ${N.blueBright})`
+        : 'rgba(37,99,176,0.08)',
+      boxShadow: showFields ? '0 4px 14px rgba(37,99,176,0.22)' : 'none',
+      transition: 'all 0.25s',
+    }}
+  >
+    <span style={{
+      fontSize: 12, fontWeight: 800,
+      color: showFields ? '#ffffff' : N.blueBright,
+    }}>
+      {showFields ? 'Hide Fields' : '＋ Add Field & Subject'}
+    </span>
+    <motion.span
+      animate={{ rotate: showFields ? 180 : 0 }}
+      transition={{ duration: 0.25 }}
+      style={{
+        fontSize: 9,
+        color: showFields ? '#ffffff' : N.blueBright,
+        display: 'inline-block', lineHeight: 1,
+      }}
+    >
+      ▼
+    </motion.span>
+  </motion.button>
+</div>
 
         {/* Selected field pills */}
         {filters.selectedFields.length > 0 && (
