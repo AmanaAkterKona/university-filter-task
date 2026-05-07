@@ -162,7 +162,7 @@ export default function UniversityCard({ university: u, index }: Props) {
                     <span style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase' as const, letterSpacing: '0.14em', color: N.dim }}>Field</span>
                   </div>
                   <p style={{ fontSize: 14, color: N.navy, fontWeight: 800, margin: 0, lineHeight: 1.4 }}>
-                    {u.fieldOfStudy}
+                   {u.fields.join(', ')}
                   </p>
                 </div>
 
@@ -175,7 +175,7 @@ export default function UniversityCard({ university: u, index }: Props) {
                     <span style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase' as const, letterSpacing: '0.14em', color: N.dim }}>Subjects</span>
                   </div>
                   <p style={{ fontSize: 13, color: 'rgba(10,31,68,0.75)', fontWeight: 600, margin: 0, lineHeight: 1.5 }}>
-                    {u.subjects.join(', ')}
+                    {u.subjects.flatMap(s => s.subjects).join(', ')}
                   </p>
                 </div>
 
