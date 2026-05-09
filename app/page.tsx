@@ -20,7 +20,7 @@ const universityImages = [
 ];
 
 export default function HomePage() {
-  const { filters, setFilters, results, searched, search, goBack } = useUniversityFilter();
+  const { filters, setFilters, results, searched, search, goBack, applyFieldSubjectFilter } = useUniversityFilter();
 
   return (
     <main style={{
@@ -215,11 +215,12 @@ export default function HomePage() {
               transition={{ type: 'spring', stiffness: 100 }}
             >
               <ResultsList
-                results={results}
-                searched={searched}
-                filters={filters}
-                onBack={goBack}
-              />
+  results={results}
+  searched={searched}
+  filters={filters}
+  onBack={goBack}
+  onApplyFilter={applyFieldSubjectFilter}
+/>
             </motion.div>
           )}
         </AnimatePresence>
