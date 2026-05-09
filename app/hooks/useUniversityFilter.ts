@@ -19,20 +19,6 @@ export function useUniversityFilter() {
       if (filters.country && u.country !== filters.country) return false;
       if (!isNaN(cgpa)  && cgpa  < u.requiredCGPA)  return false;
       if (!isNaN(ielts) && ielts < u.requiredIELTS) return false;
-
-      // Field filter
-      if (filters.selectedFields.length > 0) {
-        const hasField = filters.selectedFields.some(f => u.fields.includes(f));
-        if (!hasField) return false;
-      }
-
-      // Subject filter
-      if (filters.selectedSubjects.length > 0) {
-        const allSubjects = u.subjects.flatMap(s => s.subjects);
-        const hasSubject = filters.selectedSubjects.some(s => allSubjects.includes(s));
-        if (!hasSubject) return false;
-      }
-
       return true;
     });
 
@@ -40,5 +26,9 @@ export function useUniversityFilter() {
     setSearched(true);
   };
 
-  return { filters, setFilters, results, searched, search };
+  const goBack = () => {
+    setSearched(false);
+  };
+
+  return { filters, setFilters, results, searched, search, goBack };
 }

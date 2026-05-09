@@ -5,12 +5,12 @@ import ResultsList from './components/ResultsList';
 import { useUniversityFilter } from './hooks/useUniversityFilter';
 
 const N = {
-  navy:    '#0a1f44',
-  navyMid: '#1a3a6b',
-  blue:    '#1e4d8c',
+  navy:       '#0a1f44',
+  navyMid:    '#1a3a6b',
+  blue:       '#1e4d8c',
   blueBright: '#2563b0',
-  dim:     'rgba(10,31,68,0.55)',
-  border:  'rgba(30,77,140,0.22)',
+  dim:        'rgba(10,31,68,0.55)',
+  border:     'rgba(30,77,140,0.22)',
 };
 
 const universityImages = [
@@ -20,7 +20,7 @@ const universityImages = [
 ];
 
 export default function HomePage() {
-  const { filters, setFilters, results, searched, search } = useUniversityFilter();
+  const { filters, setFilters, results, searched, search, goBack } = useUniversityFilter();
 
   return (
     <main style={{
@@ -30,7 +30,7 @@ export default function HomePage() {
       position: 'relative', overflow: 'hidden',
     }}>
 
-      {/* Subtle ambient */}
+      {/* Ambient background */}
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
         <motion.div style={{
           position: 'absolute', top: '-20%', left: '-10%', width: '55%', height: '55%',
@@ -57,13 +57,12 @@ export default function HomePage() {
 
       <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 1 }}>
 
-        {/* ── Header ── */}
+        {/* ── Header (always visible) ── */}
         <motion.div
           initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           style={{ textAlign: 'center', marginBottom: 64 }}
         >
-          {/* Icon badge */}
           <div style={{
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
             width: 68, height: 68, borderRadius: '50%', marginBottom: 22,
@@ -75,7 +74,6 @@ export default function HomePage() {
             </svg>
           </div>
 
-          {/* Eyebrow label */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 14 }}>
             <div style={{ width: 32, height: 1.5, background: N.blueBright, borderRadius: 1 }} />
             <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '3px', textTransform: 'uppercase' as const, color: N.blueBright }}>
@@ -90,7 +88,6 @@ export default function HomePage() {
           }}>
             Find Your{' '}
             <span style={{
-              color: N.blueBright,
               background: `linear-gradient(135deg, ${N.navyMid}, ${N.blueBright})`,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
@@ -103,12 +100,14 @@ export default function HomePage() {
           </p>
         </motion.div>
 
-        {/* ── Filter + Images ── */}
-        <AnimatePresence>
+        {/* ── Filter + Images (shown when NOT searched) ── */}
+        <AnimatePresence mode="wait">
           {!searched && (
-            <motion.div key="filter"
-              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+            <motion.div key="filter-section"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.35 }}
               style={{ position: 'relative' }}
             >
               {/* Dashed decoration */}
@@ -124,7 +123,7 @@ export default function HomePage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 36, alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
 
-                {/* LEFT */}
+                {/* LEFT: Form */}
                 <div style={{ marginTop: 120 }}>
                   <FilterForm filters={filters} onChange={setFilters} onSearch={search} />
 
@@ -189,8 +188,7 @@ export default function HomePage() {
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}
                     style={{
                       position: 'absolute', bottom: -20, left: '50%', transform: 'translateX(-50%)',
-                      background: '#ffffff',
-                      border: `1.5px solid ${N.border}`,
+                      background: '#ffffff', border: `1.5px solid ${N.border}`,
                       borderRadius: 50, padding: '7px 22px',
                       display: 'flex', alignItems: 'center', gap: 9,
                       whiteSpace: 'nowrap', zIndex: 10,
@@ -207,58 +205,25 @@ export default function HomePage() {
               </div>
             </motion.div>
           )}
-        </AnimatePresence>
 
-        {/* ── Results ── */}
-        <AnimatePresence>
+          {/* ── Results (shown when searched) ── */}
           {searched && (
-            <motion.div key="results"
-              initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
+            <motion.div key="results-section"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ type: 'spring', stiffness: 100 }}
             >
-              {/* Filter pill bar */}
-              <div style={{
-                background: '#ffffff',
-                border: `1px solid ${N.border}`,
-                borderRadius: 16, padding: '14px 24px',
-                display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32,
-                boxShadow: '0 4px 20px rgba(10,31,68,0.07)',
-              }}>
-                <span style={{ color: N.dim, fontSize: 12, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '1px' }}>Active Filters</span>
-                {filters.country && (
-                  <span style={{ fontSize: 12, padding: '4px 13px', borderRadius: 50, background: 'rgba(30,77,140,0.08)', border: `1px solid ${N.border}`, color: N.navy, fontWeight: 700 }}>
-                    🌍 {filters.country}
-                  </span>
-                )}
-                {filters.cgpa && (
-                  <span style={{ fontSize: 12, padding: '4px 13px', borderRadius: 50, background: 'rgba(30,77,140,0.08)', border: `1px solid ${N.border}`, color: N.navy, fontWeight: 700 }}>
-                    CGPA {filters.cgpa}
-                  </span>
-                )}
-                {filters.ielts && (
-                  <span style={{ fontSize: 12, padding: '4px 13px', borderRadius: 50, background: 'rgba(30,77,140,0.08)', border: `1px solid ${N.border}`, color: N.navy, fontWeight: 700 }}>
-                    IELTS {filters.ielts}
-                  </span>
-                )}
-                <motion.button
-                  whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                  onClick={() => window.location.reload()}
-                  style={{
-                    marginLeft: 'auto', padding: '6px 18px', borderRadius: 50,
-                    background: N.navy, border: 'none',
-                    color: '#fff', fontSize: 12, fontWeight: 700,
-                    cursor: 'pointer', fontFamily: 'inherit',
-                  }}
-                >
-                  ← New Search
-                </motion.button>
-              </div>
-
-              <ResultsList results={results} searched={searched} />
+              <ResultsList
+                results={results}
+                searched={searched}
+                filters={filters}
+                onBack={goBack}
+              />
             </motion.div>
           )}
         </AnimatePresence>
+
       </div>
     </main>
   );
