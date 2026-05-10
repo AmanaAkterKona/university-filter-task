@@ -93,7 +93,7 @@ function ImageGallery() {
             />
           )}
         </AnimatePresence>
-        <motion.img key={`c0-${current}`} src={set[0]} alt="Campus"
+        <motion.img key={`c0-${current}`} src={set[0]} alt=""
           initial={{ opacity: 0, scale: 1.05 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.9, ease: 'easeInOut' }}
@@ -256,7 +256,7 @@ export default function HomePage() {
             >
               {/* Dashed decoration */}
               <div style={{
-                position: 'absolute', top: 60, left: '42%', right: -8, bottom: -24,
+                position: 'absolute', top: 0, left: '42%', right: -8, bottom: -24,
                 border: `1px dashed ${N.border}`,
                 borderRadius: 24, pointerEvents: 'none', zIndex: 0,
               }}>
@@ -268,7 +268,7 @@ export default function HomePage() {
               <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 36, alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
 
                 {/* LEFT: Form */}
-                <div style={{ marginTop: 120 }}>
+               <div style={{ marginTop: 60 }}>
                   <FilterForm filters={filters} onChange={setFilters} onSearch={search} />
                   <motion.div
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
@@ -288,8 +288,7 @@ export default function HomePage() {
                 </div>
 
                 {/* RIGHT: Slideshow */}
-                <div style={{ position: 'relative', paddingTop: 40 }}>
-                  <ImageGallery />
+<div style={{ position: 'relative', paddingTop: 0, marginTop: 0 }}>                  <ImageGallery />
                   {/* Floating badge */}
                   <motion.div
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}
