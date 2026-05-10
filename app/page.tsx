@@ -32,6 +32,10 @@ const SLIDE_SETS = [
   ],
 ];
 
+const onErr = (e: React.SyntheticEvent<HTMLImageElement>) => {
+  e.currentTarget.style.display = 'none';
+};
+
 function ImageGallery() {
   const [current, setCurrent] = useState(0);
   const [prev, setPrev]       = useState<number | null>(null);
@@ -46,10 +50,7 @@ function ImageGallery() {
 
   useEffect(() => {
     const id = setInterval(() => {
-      setCurrent(c => {
-        setPrev(c);
-        return (c + 1) % total;
-      });
+      setCurrent(c => { setPrev(c); return (c + 1) % total; });
     }, 4000);
     return () => clearInterval(id);
   }, []);
@@ -57,47 +58,48 @@ function ImageGallery() {
   const set     = SLIDE_SETS[current];
   const prevSet = prev !== null ? SLIDE_SETS[prev] : null;
 
-  const boxStyle = (spanRow: boolean): React.CSSProperties => ({
-    borderRadius: 20,
-    overflow:     'hidden',
-    position:     'relative',
-    background:   '#dde8f5',
-    boxShadow:    spanRow
-      ? '0 12px 40px rgba(10,31,68,0.18)'
-      : '0 8px 28px rgba(10,31,68,0.12)',
+  const box = (spanRow: boolean): React.CSSProperties => ({
+    borderRadius: 20, overflow: 'hidden', position: 'relative',
+    background: '#dde8f5',
+    boxShadow: spanRow ? '0 12px 40px rgba(10,31,68,0.18)' : '0 8px 28px rgba(10,31,68,0.12)',
   });
 
   const overlay: React.CSSProperties = {
-    position:   'absolute', inset: 0, zIndex: 2,
+    position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
     background: 'linear-gradient(to top, rgba(10,31,68,0.32) 0%, transparent 55%)',
-    pointerEvents: 'none',
+  };
+
+  const imgStyle: React.CSSProperties = {
+    position: 'absolute', inset: 0,
+    width: '100%', height: '100%', objectFit: 'cover',
   };
 
   return (
     <div style={{
-      display:             'grid',
+      display: 'grid',
       gridTemplateColumns: '1fr 1fr',
-      gridTemplateRows:    '254px 254px',
-      gap:                 12,
-      width:               '100%',
+      gridTemplateRows: '254px 254px',
+      gap: 12, width: '100%',
     }}>
 
-      {/* Big left — spans 2 rows */}
-      <div style={{ ...boxStyle(true), gridColumn: '1', gridRow: '1 / 3' }}>
+      {/* Big left */}
+      <div style={{ ...box(true), gridColumn: '1', gridRow: '1 / 3' }}>
         <AnimatePresence>
           {prevSet && (
             <motion.img key={`p0-${prev}`} src={prevSet[0]} alt=""
+              onError={onErr}
               initial={{ opacity: 1 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.9, ease: 'easeInOut' }}
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
+              style={{ ...imgStyle, zIndex: 0 }}
             />
           )}
         </AnimatePresence>
         <motion.img key={`c0-${current}`} src={set[0]} alt=""
+          onError={onErr}
           initial={{ opacity: 0, scale: 1.05 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.9, ease: 'easeInOut' }}
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 1 }}
+          style={{ ...imgStyle, zIndex: 1 }}
         />
         <div style={overlay} />
         {/* Live badge */}
@@ -106,7 +108,7 @@ function ImageGallery() {
             animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }} />
           <span style={{ color: '#fff', fontSize: 11, fontWeight: 700 }}>Live Preview</span>
         </div>
-        {/* Slide dots */}
+        {/* Dots */}
         <div style={{ position: 'absolute', bottom: 14, left: 16, zIndex: 4, display: 'flex', gap: 6 }}>
           {SLIDE_SETS.map((_, i) => (
             <motion.div key={i}
@@ -120,41 +122,45 @@ function ImageGallery() {
       </div>
 
       {/* Top right */}
-      <div style={{ ...boxStyle(false), gridColumn: '2', gridRow: '1' }}>
+      <div style={{ ...box(false), gridColumn: '2', gridRow: '1' }}>
         <AnimatePresence>
           {prevSet && (
             <motion.img key={`p1-${prev}`} src={prevSet[1]} alt=""
+              onError={onErr}
               initial={{ opacity: 1 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.9, ease: 'easeInOut' }}
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
+              style={{ ...imgStyle, zIndex: 0 }}
             />
           )}
         </AnimatePresence>
-        <motion.img key={`c1-${current}`} src={set[1]} alt="University"
+        <motion.img key={`c1-${current}`} src={set[1]} alt=""
+          onError={onErr}
           initial={{ opacity: 0, scale: 1.05 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.9, ease: 'easeInOut', delay: 0.1 }}
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 1 }}
+          style={{ ...imgStyle, zIndex: 1 }}
         />
         <div style={overlay} />
       </div>
 
       {/* Bottom right */}
-      <div style={{ ...boxStyle(false), gridColumn: '2', gridRow: '2' }}>
+      <div style={{ ...box(false), gridColumn: '2', gridRow: '2' }}>
         <AnimatePresence>
           {prevSet && (
             <motion.img key={`p2-${prev}`} src={prevSet[2]} alt=""
+              onError={onErr}
               initial={{ opacity: 1 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.9, ease: 'easeInOut' }}
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
+              style={{ ...imgStyle, zIndex: 0 }}
             />
           )}
         </AnimatePresence>
-        <motion.img key={`c2-${current}`} src={set[2]} alt="Students"
+        <motion.img key={`c2-${current}`} src={set[2]} alt=""
+          onError={onErr}
           initial={{ opacity: 0, scale: 1.05 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.9, ease: 'easeInOut', delay: 0.2 }}
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 1 }}
+          style={{ ...imgStyle, zIndex: 1 }}
         />
         <div style={overlay} />
       </div>
@@ -167,74 +173,35 @@ export default function HomePage() {
 
   return (
     <main style={{
-      background: '#fafafa',
-      minHeight: '100vh', padding: '80px 20px',
-      fontFamily: 'system-ui, sans-serif',
-      position: 'relative', overflow: 'hidden',
+      background: '#fafafa', minHeight: '100vh', padding: '80px 20px',
+      fontFamily: 'system-ui, sans-serif', position: 'relative', overflow: 'hidden',
     }}>
-
-      {/* Ambient background */}
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
-        <motion.div style={{
-          position: 'absolute', top: '-20%', left: '-10%', width: '55%', height: '55%',
-          borderRadius: '50%', filter: 'blur(140px)',
-          background: 'radial-gradient(circle, rgba(30,77,140,0.07), transparent 70%)',
-        }}
-          animate={{ scale: [1, 1.15, 1], x: [0, 40, 0] }}
-          transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.div style={{
-          position: 'absolute', bottom: '-20%', right: '-10%', width: '55%', height: '55%',
-          borderRadius: '50%', filter: 'blur(140px)',
-          background: 'radial-gradient(circle, rgba(10,31,68,0.06), transparent 70%)',
-        }}
-          animate={{ scale: [1, 1.2, 1], x: [0, -40, 0] }}
-          transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: 'radial-gradient(rgba(30,77,140,0.035) 1px, transparent 1px)',
-          backgroundSize: '44px 44px',
-        }} />
+        <motion.div style={{ position: 'absolute', top: '-20%', left: '-10%', width: '55%', height: '55%', borderRadius: '50%', filter: 'blur(140px)', background: 'radial-gradient(circle, rgba(30,77,140,0.07), transparent 70%)' }}
+          animate={{ scale: [1, 1.15, 1], x: [0, 40, 0] }} transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }} />
+        <motion.div style={{ position: 'absolute', bottom: '-20%', right: '-10%', width: '55%', height: '55%', borderRadius: '50%', filter: 'blur(140px)', background: 'radial-gradient(circle, rgba(10,31,68,0.06), transparent 70%)' }}
+          animate={{ scale: [1, 1.2, 1], x: [0, -40, 0] }} transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }} />
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(rgba(30,77,140,0.035) 1px, transparent 1px)', backgroundSize: '44px 44px' }} />
       </div>
 
       <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 1 }}>
 
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          style={{ textAlign: 'center', marginBottom: 64 }}
-        >
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            width: 68, height: 68, borderRadius: '50%', marginBottom: 22,
-            background: `linear-gradient(135deg, ${N.navyMid}, ${N.blue})`,
-            boxShadow: '0 8px 32px rgba(30,77,140,0.28), inset 0 1px 0 rgba(255,255,255,0.12)',
-          }}>
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+          style={{ textAlign: 'center', marginBottom: 64 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 68, height: 68, borderRadius: '50%', marginBottom: 22, background: `linear-gradient(135deg, ${N.navyMid}, ${N.blue})`, boxShadow: '0 8px 32px rgba(30,77,140,0.28), inset 0 1px 0 rgba(255,255,255,0.12)' }}>
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
               <path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c3 3 9 3 12 0v-5" />
             </svg>
           </div>
-
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 14 }}>
             <div style={{ width: 32, height: 1.5, background: N.blueBright, borderRadius: 1 }} />
-            <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '3px', textTransform: 'uppercase' as const, color: N.blueBright }}>
-              Global University Search
-            </span>
+            <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '3px', textTransform: 'uppercase' as const, color: N.blueBright }}>Global University Search</span>
             <div style={{ width: 32, height: 1.5, background: N.blueBright, borderRadius: 1 }} />
           </div>
-
-          <h1 style={{
-            fontSize: 'clamp(32px,4.5vw,56px)', fontWeight: 900,
-            color: N.navy, margin: '0 0 18px', lineHeight: 1.08, letterSpacing: '-1px',
-          }}>
+          <h1 style={{ fontSize: 'clamp(32px,4.5vw,56px)', fontWeight: 900, color: N.navy, margin: '0 0 18px', lineHeight: 1.08, letterSpacing: '-1px' }}>
             Find Your{' '}
-            <span style={{
-              background: `linear-gradient(135deg, ${N.navyMid}, ${N.blueBright})`,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}>
+            <span style={{ background: `linear-gradient(135deg, ${N.navyMid}, ${N.blueBright})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               Perfect University
             </span>
           </h1>
@@ -248,18 +215,12 @@ export default function HomePage() {
           {/* Filter page */}
           {!searched && (
             <motion.div key="filter-section"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.35 }}
+              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.35 }}
               style={{ position: 'relative' }}
             >
-              {/* Dashed decoration */}
-              <div style={{
-                position: 'absolute', top: 0, left: '42%', right: -8, bottom: -24,
-                border: `1px dashed ${N.border}`,
-                borderRadius: 24, pointerEvents: 'none', zIndex: 0,
-              }}>
+              {/* Dashed border */}
+              <div style={{ position: 'absolute', top: 0, left: '42%', right: -8, bottom: -24, border: `1px dashed ${N.border}`, borderRadius: 24, pointerEvents: 'none', zIndex: 0 }}>
                 {[{ top: 10, left: 10 }, { top: 10, right: 10 }, { bottom: 10, left: 10 }, { bottom: 10, right: 10 }].map((pos, i) => (
                   <div key={i} style={{ position: 'absolute', width: 7, height: 7, borderRadius: '50%', background: N.blueBright, opacity: 0.5, ...pos }} />
                 ))}
@@ -267,13 +228,11 @@ export default function HomePage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 36, alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
 
-                {/* LEFT: Form */}
-               <div style={{ marginTop: 60 }}>
+                {/* LEFT */}
+                <div style={{ marginTop: 60 }}>
                   <FilterForm filters={filters} onChange={setFilters} onSearch={search} />
-                  <motion.div
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
-                    style={{ display: 'flex', gap: 40, marginTop: 28, paddingLeft: 4 }}
-                  >
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
+                    style={{ display: 'flex', gap: 40, marginTop: 28, paddingLeft: 4 }}>
                     {[
                       { label: 'Universities Listed', value: '120+' },
                       { label: 'Countries Covered',   value: '12'   },
@@ -287,24 +246,13 @@ export default function HomePage() {
                   </motion.div>
                 </div>
 
-                {/* RIGHT: Slideshow */}
-<div style={{ position: 'relative', paddingTop: 0, marginTop: 0 }}>                  <ImageGallery />
-                  {/* Floating badge */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}
-                    style={{
-                      position: 'absolute', bottom: -18, left: '50%', transform: 'translateX(-50%)',
-                      background: '#ffffff', border: `1.5px solid ${N.border}`,
-                      borderRadius: 50, padding: '7px 22px',
-                      display: 'flex', alignItems: 'center', gap: 9,
-                      whiteSpace: 'nowrap', zIndex: 10,
-                      boxShadow: '0 4px 20px rgba(10,31,68,0.12)',
-                    }}>
-                    <motion.div
-                      style={{ width: 8, height: 8, borderRadius: '50%', background: N.blueBright }}
-                      animate={{ opacity: [1, 0.3, 1] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                    />
+                {/* RIGHT */}
+                <div style={{ position: 'relative' }}>
+                  <ImageGallery />
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}
+                    style={{ position: 'absolute', bottom: -18, left: '50%', transform: 'translateX(-50%)', background: '#ffffff', border: `1.5px solid ${N.border}`, borderRadius: 50, padding: '7px 22px', display: 'flex', alignItems: 'center', gap: 9, whiteSpace: 'nowrap', zIndex: 10, boxShadow: '0 4px 20px rgba(10,31,68,0.12)' }}>
+                    <motion.div style={{ width: 8, height: 8, borderRadius: '50%', background: N.blueBright }}
+                      animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }} />
                     <span style={{ color: N.navy, fontSize: 12, fontWeight: 800 }}>120+ Universities Ready</span>
                   </motion.div>
                 </div>
@@ -315,16 +263,12 @@ export default function HomePage() {
           {/* Results page */}
           {searched && (
             <motion.div key="results-section"
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ type: 'spring', stiffness: 100 }}
+              initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }} transition={{ type: 'spring', stiffness: 100 }}
             >
               <ResultsList
-                results={results}
-                searched={searched}
-                filters={filters}
-                onBack={goBack}
+                results={results} searched={searched}
+                filters={filters} onBack={goBack}
                 onApplyFilter={applyFieldSubjectFilter}
               />
             </motion.div>
