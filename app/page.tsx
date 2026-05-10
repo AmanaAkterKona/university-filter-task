@@ -1,4 +1,5 @@
 'use client';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import FilterForm from './components/FilterForm';
 import ResultsList from './components/ResultsList';
@@ -13,11 +14,154 @@ const N = {
   border:     'rgba(30,77,140,0.22)',
 };
 
-const universityImages = [
+const ALL_IMAGES = [
   "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?w=800&q=95",
   "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=800&q=95",
   "https://images.unsplash.com/photo-1592280771190-3e2e4d571952?w=700&q=95",
+  "https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?w=800&q=95",
+  "https://images.unsplash.com/photo-1562774053-701939374585?w=700&q=95",
+  "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=700&q=95",
+  "https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=700&q=95",
+  "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=700&q=95",
+  "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=700&q=95",
 ];
+
+function ImageGallery() {
+  const [slots, setSlots] = useState([0, 1, 2]);
+  const [transitioning, setTransitioning] = useState<number | null>(null);
+
+  useEffect(() => {
+    ALL_IMAGES.forEach(src => {
+      const img = new window.Image();
+      img.src = src;
+    });
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const slot = Math.floor(Math.random() * 3);
+      setTransitioning(slot);
+      setTimeout(() => {
+        setSlots(prev => {
+          const used = prev.filter((_, i) => i !== slot);
+          const available = ALL_IMAGES
+            .map((_, i) => i)
+            .filter(i => !used.includes(i) && i !== prev[slot]);
+          const nextIdx = available[Math.floor(Math.random() * available.length)];
+          const updated = [...prev];
+          updated[slot] = nextIdx;
+          return updated;
+        });
+        setTimeout(() => setTransitioning(null), 700);
+      }, 400);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gridTemplateRows: '254px 254px',
+      gap: 12,
+      width: '100%',
+    }}>
+      {/* Slot 0 — big left, spans 2 rows */}
+      <div style={{
+        gridColumn: '1', gridRow: '1 / 3',
+        borderRadius: 20, overflow: 'hidden',
+        position: 'relative',
+        background: 'rgba(30,77,140,0.08)',
+        boxShadow: '0 12px 40px rgba(10,31,68,0.18)',
+      }}>
+        <motion.img
+          key={`0-${slots[0]}`}
+          src={ALL_IMAGES[slots[0]]}
+          alt="University campus"
+          initial={{ opacity: 0, scale: 1.06 }}
+          animate={{ opacity: transitioning === 0 ? 0 : 1, scale: transitioning === 0 ? 1.06 : 1 }}
+          transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,31,68,0.40) 0%, transparent 55%)', zIndex: 1 }} />
+        <AnimatePresence>
+          {transitioning === 0 && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}
+              style={{ position: 'absolute', inset: 0, zIndex: 2, backdropFilter: 'blur(4px)', background: 'rgba(37,99,176,0.06)' }} />
+          )}
+        </AnimatePresence>
+        {/* Live badge */}
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}
+          style={{ position: 'absolute', top: 14, left: 14, zIndex: 3, background: 'rgba(10,31,68,0.65)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 50, padding: '5px 14px', display: 'flex', alignItems: 'center', gap: 7 }}>
+          <motion.div style={{ width: 6, height: 6, borderRadius: '50%', background: '#60a5fa' }}
+            animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }} />
+          <span style={{ color: '#fff', fontSize: 11, fontWeight: 700 }}>Live Preview</span>
+        </motion.div>
+        {/* Dot indicators */}
+        <div style={{ position: 'absolute', bottom: 14, left: 16, zIndex: 3, display: 'flex', gap: 5 }}>
+          {[0, 1, 2, 3, 4].map(i => (
+            <motion.div key={i}
+              animate={{ width: i === slots[0] % 5 ? 20 : 6, opacity: i === slots[0] % 5 ? 1 : 0.35 }}
+              transition={{ duration: 0.35 }}
+              style={{ height: 5, borderRadius: 3, background: '#fff' }} />
+          ))}
+        </div>
+      </div>
+
+      {/* Slot 1 — top right */}
+      <div style={{
+        gridColumn: '2', gridRow: '1',
+        borderRadius: 20, overflow: 'hidden',
+        position: 'relative',
+        background: 'rgba(30,77,140,0.08)',
+        boxShadow: '0 8px 28px rgba(10,31,68,0.12)',
+      }}>
+        <motion.img
+          key={`1-${slots[1]}`}
+          src={ALL_IMAGES[slots[1]]}
+          alt="University"
+          initial={{ opacity: 0, scale: 1.06 }}
+          animate={{ opacity: transitioning === 1 ? 0 : 1, scale: transitioning === 1 ? 1.06 : 1 }}
+          transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,31,68,0.28) 0%, transparent 55%)', zIndex: 1 }} />
+        <AnimatePresence>
+          {transitioning === 1 && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}
+              style={{ position: 'absolute', inset: 0, zIndex: 2, backdropFilter: 'blur(4px)', background: 'rgba(37,99,176,0.06)' }} />
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Slot 2 — bottom right */}
+      <div style={{
+        gridColumn: '2', gridRow: '2',
+        borderRadius: 20, overflow: 'hidden',
+        position: 'relative',
+        background: 'rgba(30,77,140,0.08)',
+        boxShadow: '0 8px 28px rgba(10,31,68,0.12)',
+      }}>
+        <motion.img
+          key={`2-${slots[2]}`}
+          src={ALL_IMAGES[slots[2]]}
+          alt="Students"
+          initial={{ opacity: 0, scale: 1.06 }}
+          animate={{ opacity: transitioning === 2 ? 0 : 1, scale: transitioning === 2 ? 1.06 : 1 }}
+          transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,31,68,0.28) 0%, transparent 55%)', zIndex: 1 }} />
+        <AnimatePresence>
+          {transitioning === 2 && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}
+              style={{ position: 'absolute', inset: 0, zIndex: 2, backdropFilter: 'blur(4px)', background: 'rgba(37,99,176,0.06)' }} />
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
 
 export default function HomePage() {
   const { filters, setFilters, results, searched, search, goBack, applyFieldSubjectFilter } = useUniversityFilter();
@@ -57,7 +201,7 @@ export default function HomePage() {
 
       <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 1 }}>
 
-        {/* ── Header (always visible) ── */}
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -100,8 +244,9 @@ export default function HomePage() {
           </p>
         </motion.div>
 
-        {/* ── Filter + Images (shown when NOT searched) ── */}
         <AnimatePresence mode="wait">
+
+          {/* Filter page */}
           {!searched && (
             <motion.div key="filter-section"
               initial={{ opacity: 0, y: 30 }}
@@ -126,8 +271,6 @@ export default function HomePage() {
                 {/* LEFT: Form */}
                 <div style={{ marginTop: 120 }}>
                   <FilterForm filters={filters} onChange={setFilters} onSearch={search} />
-
-                  {/* Stats */}
                   <motion.div
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
                     style={{ display: 'flex', gap: 40, marginTop: 28, paddingLeft: 4 }}
@@ -145,49 +288,14 @@ export default function HomePage() {
                   </motion.div>
                 </div>
 
-                {/* RIGHT: Images */}
-                <div style={{ position: 'relative', paddingTop: 60 }}>
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4 }}
-                    style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, height: 520 }}
-                  >
-                    <motion.div whileHover={{ scale: 1.02 }}
-                      style={{ gridRow: '1/3', borderRadius: 20, overflow: 'hidden', position: 'relative', boxShadow: '0 12px 40px rgba(10,31,68,0.18)' }}>
-                      <img src={universityImages[0]} alt="Campus"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.7s ease' }}
-                        onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.07)')}
-                        onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
-                      />
-                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,31,68,0.30) 0%, transparent 55%)' }} />
-                    </motion.div>
-
-                    <motion.div whileHover={{ scale: 1.02 }}
-                      style={{ borderRadius: 20, overflow: 'hidden', position: 'relative', boxShadow: '0 12px 40px rgba(10,31,68,0.14)' }}>
-                      <img src={universityImages[1]} alt="University"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.7s ease' }}
-                        onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.07)')}
-                        onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
-                      />
-                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,31,68,0.22) 0%, transparent 55%)' }} />
-                    </motion.div>
-
-                    <motion.div whileHover={{ scale: 1.02 }}
-                      style={{ borderRadius: 20, overflow: 'hidden', position: 'relative', boxShadow: '0 12px 40px rgba(10,31,68,0.14)' }}>
-                      <img src={universityImages[2]} alt="Students"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.7s ease' }}
-                        onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.07)')}
-                        onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
-                      />
-                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,31,68,0.22) 0%, transparent 55%)' }} />
-                    </motion.div>
-                  </motion.div>
-
+                {/* RIGHT: Auto-rotating images */}
+                <div style={{ position: 'relative', paddingTop: 40 }}>
+                  <ImageGallery />
                   {/* Floating badge */}
                   <motion.div
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}
                     style={{
-                      position: 'absolute', bottom: -20, left: '50%', transform: 'translateX(-50%)',
+                      position: 'absolute', bottom: -18, left: '50%', transform: 'translateX(-50%)',
                       background: '#ffffff', border: `1.5px solid ${N.border}`,
                       borderRadius: 50, padding: '7px 22px',
                       display: 'flex', alignItems: 'center', gap: 9,
@@ -206,7 +314,7 @@ export default function HomePage() {
             </motion.div>
           )}
 
-          {/* ── Results (shown when searched) ── */}
+          {/* Results page */}
           {searched && (
             <motion.div key="results-section"
               initial={{ opacity: 0, y: 40 }}
@@ -215,16 +323,16 @@ export default function HomePage() {
               transition={{ type: 'spring', stiffness: 100 }}
             >
               <ResultsList
-  results={results}
-  searched={searched}
-  filters={filters}
-  onBack={goBack}
-  onApplyFilter={applyFieldSubjectFilter}
-/>
+                results={results}
+                searched={searched}
+                filters={filters}
+                onBack={goBack}
+                onApplyFilter={applyFieldSubjectFilter}
+              />
             </motion.div>
           )}
-        </AnimatePresence>
 
+        </AnimatePresence>
       </div>
     </main>
   );
