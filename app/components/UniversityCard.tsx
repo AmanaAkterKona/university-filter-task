@@ -36,6 +36,7 @@ const fieldIcons: Record<string, string> = {
   'Mathematics & Statistics': '📊',
 };
 
+// ── Modal ──
 interface ModalProps {
   university: University;
   onClose: () => void;
@@ -85,10 +86,8 @@ function UniversityModal({ university: u, onClose, onApply }: ModalProps) {
       onClick={onClose}
       style={{
         position: 'fixed', inset: 0, zIndex: 1000,
-        background: 'rgba(10,31,68,0.55)',
-        backdropFilter: 'blur(6px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '20px',
+        background: 'rgba(10,31,68,0.55)', backdropFilter: 'blur(6px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px',
       }}
     >
       <motion.div
@@ -98,8 +97,7 @@ function UniversityModal({ university: u, onClose, onApply }: ModalProps) {
         transition={{ type: 'spring', stiffness: 200, damping: 22 }}
         onClick={e => e.stopPropagation()}
         style={{
-          width: '100%', maxWidth: 700,
-          maxHeight: '90vh', overflowY: 'auto',
+          width: '100%', maxWidth: 700, maxHeight: '90vh', overflowY: 'auto',
           borderRadius: 24, background: '#ffffff',
           boxShadow: '0 32px 80px rgba(10,31,68,0.30), 0 0 0 1px rgba(37,99,176,0.15)',
         }}
@@ -113,19 +111,16 @@ function UniversityModal({ university: u, onClose, onApply }: ModalProps) {
           <div style={{ position: 'absolute', top: 0, right: 0, width: 200, height: 200, borderRadius: '50%', filter: 'blur(60px)', opacity: 0.15, background: `radial-gradient(circle, ${N.blueBright}, transparent 70%)`, transform: 'translate(30%,-30%)', pointerEvents: 'none' }} />
           <motion.div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${N.blueBright}, #60a5fa, ${N.blueBright}, transparent)`, backgroundSize: '200% 100%' }}
             animate={{ backgroundPosition: ['0% 0', '200% 0'] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-          />
+            transition={{ duration: 3, repeat: Infinity, ease: 'linear' }} />
           <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} onClick={onClose}
             style={{ position: 'absolute', top: 20, right: 20, width: 36, height: 36, borderRadius: '50%', background: 'rgba(255,255,255,0.12)', border: '1.5px solid rgba(255,255,255,0.20)', color: '#ffffff', fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'inherit' }}>
             ✕
           </motion.button>
-
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', borderRadius: 50, marginBottom: 14, background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.20)' }}>
             <motion.div style={{ width: 6, height: 6, borderRadius: '50%', background: '#60a5fa' }}
               animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }} />
             <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em' }}>UNIVERSITY DETAILS</span>
           </div>
-
           <h2 style={{ color: '#ffffff', fontWeight: 900, fontSize: 22, margin: '0 0 10px', paddingRight: 40 }}>{u.name}</h2>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
             <span style={{ fontSize: 20 }}>{countryFlags[u.country] || '🌍'}</span>
@@ -162,35 +157,22 @@ function UniversityModal({ university: u, onClose, onApply }: ModalProps) {
                 <p style={{ fontSize: 11, color: N.dim, margin: '2px 0 0' }}>Choose one or more fields available at this university</p>
               </div>
               {selectedFields.length > 0 && (
-                <span style={{ fontSize: 11, background: N.blueBright, color: '#fff', borderRadius: 50, padding: '2px 10px', fontWeight: 800 }}>
-                  {selectedFields.length} selected
-                </span>
+                <span style={{ fontSize: 11, background: N.blueBright, color: '#fff', borderRadius: 50, padding: '2px 10px', fontWeight: 800 }}>{selectedFields.length} selected</span>
               )}
             </div>
-
             <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 8 }}>
               {u.fields.map(field => {
                 const active = selectedFields.includes(field);
                 return (
                   <motion.div key={field} whileHover={{ x: 2 }} whileTap={{ scale: 0.99 }}
                     onClick={() => toggleField(field)}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 12,
-                      padding: '12px 16px', borderRadius: 14, cursor: 'pointer',
-                      border: active ? `1.5px solid ${N.blueBright}` : '1.5px solid rgba(30,77,140,0.12)',
-                      background: active ? 'linear-gradient(135deg, rgba(30,77,140,0.07), rgba(37,99,176,0.04))' : '#fafbff',
-                      transition: 'all 0.2s',
-                    }}>
+                    style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 14, cursor: 'pointer', border: active ? `1.5px solid ${N.blueBright}` : '1.5px solid rgba(30,77,140,0.12)', background: active ? 'linear-gradient(135deg, rgba(30,77,140,0.07), rgba(37,99,176,0.04))' : '#fafbff', transition: 'all 0.2s' }}>
                     <div style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: active ? `linear-gradient(135deg, ${N.navyMid}, ${N.blueBright})` : '#ffffff', border: active ? 'none' : '2px solid rgba(30,77,140,0.25)', transition: 'all 0.2s' }}>
                       {active && <span style={{ color: '#fff', fontSize: 11, fontWeight: 900 }}>✓</span>}
                     </div>
                     <span style={{ fontSize: 16 }}>{fieldIcons[field] || '📚'}</span>
                     <span style={{ fontSize: 14, fontWeight: active ? 700 : 600, color: active ? N.navy : 'rgba(10,31,68,0.70)', flex: 1 }}>{field}</span>
-                    {active && (
-                      <span style={{ fontSize: 11, color: N.blueBright, fontWeight: 700 }}>
-                        {(FIELD_SUBJECTS[field] || []).length} subjects →
-                      </span>
-                    )}
+                    {active && <span style={{ fontSize: 11, color: N.blueBright, fontWeight: 700 }}>{(FIELD_SUBJECTS[field] || []).length} subjects →</span>}
                   </motion.div>
                 );
               })}
@@ -200,14 +182,8 @@ function UniversityModal({ university: u, onClose, onApply }: ModalProps) {
           {/* Subject Selection */}
           <AnimatePresence>
             {selectedFields.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                style={{ overflow: 'hidden', marginBottom: 20 }}
-              >
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} style={{ overflow: 'hidden', marginBottom: 20 }}>
                 <div style={{ height: 1, background: 'rgba(30,77,140,0.10)', marginBottom: 20 }} />
-
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
                   <div style={{ width: 28, height: 28, borderRadius: 8, background: 'linear-gradient(135deg, #166534, #16a34a)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, flexShrink: 0 }}>🎓</div>
                   <div style={{ flex: 1 }}>
@@ -215,12 +191,9 @@ function UniversityModal({ university: u, onClose, onApply }: ModalProps) {
                     <p style={{ fontSize: 11, color: N.dim, margin: '2px 0 0' }}>Organized by field — "Available" means this university offers it</p>
                   </div>
                   {selectedSubjects.length > 0 && (
-                    <span style={{ fontSize: 11, background: '#166534', color: '#fff', borderRadius: 50, padding: '2px 10px', fontWeight: 800 }}>
-                      {selectedSubjects.length} selected
-                    </span>
+                    <span style={{ fontSize: 11, background: '#166534', color: '#fff', borderRadius: 50, padding: '2px 10px', fontWeight: 800 }}>{selectedSubjects.length} selected</span>
                   )}
                 </div>
-
                 <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 14 }}>
                   {selectedFields.map(field => (
                     <div key={field} style={{ borderRadius: 16, border: '1px solid rgba(30,77,140,0.10)', overflow: 'hidden' }}>
@@ -235,13 +208,7 @@ function UniversityModal({ university: u, onClose, onApply }: ModalProps) {
                           return (
                             <motion.div key={subject} whileHover={{ x: 2 }}
                               onClick={() => toggleSubject(subject)}
-                              style={{
-                                display: 'flex', alignItems: 'center', gap: 10,
-                                padding: '9px 12px', borderRadius: 10, cursor: 'pointer',
-                                background: active ? 'rgba(22,101,52,0.07)' : 'transparent',
-                                border: active ? '1px solid rgba(22,101,52,0.20)' : '1px solid transparent',
-                                transition: 'all 0.15s',
-                              }}>
+                              style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 10, cursor: 'pointer', background: active ? 'rgba(22,101,52,0.07)' : 'transparent', border: active ? '1px solid rgba(22,101,52,0.20)' : '1px solid transparent', transition: 'all 0.15s' }}>
                               <div style={{ width: 18, height: 18, borderRadius: 5, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: active ? '#166534' : '#ffffff', border: active ? 'none' : '1.5px solid rgba(30,77,140,0.20)', transition: 'all 0.15s' }}>
                                 {active && <span style={{ color: '#fff', fontSize: 10, fontWeight: 900 }}>✓</span>}
                               </div>
@@ -264,45 +231,22 @@ function UniversityModal({ university: u, onClose, onApply }: ModalProps) {
 
           {/* Action Buttons */}
           <div style={{ display: 'flex', gap: 12 }}>
-            {/* Reset */}
             {hasSelection && (
-              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                onClick={handleReset}
-                style={{
-                  flex: 1, padding: '13px', borderRadius: 14, cursor: 'pointer',
-                  fontFamily: 'inherit', fontSize: 14, fontWeight: 700,
-                  background: '#ffffff', color: N.navy,
-                  border: `1.5px solid rgba(30,77,140,0.20)`,
-                  boxShadow: '0 2px 8px rgba(10,31,68,0.06)',
-                }}>
+              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleReset}
+                style={{ flex: 1, padding: '13px', borderRadius: 14, cursor: 'pointer', fontFamily: 'inherit', fontSize: 14, fontWeight: 700, background: '#ffffff', color: N.navy, border: `1.5px solid rgba(30,77,140,0.20)`, boxShadow: '0 2px 8px rgba(10,31,68,0.06)' }}>
                 ↺ Reset Filter
               </motion.button>
             )}
-
-            {/* Apply */}
             <motion.button whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.98 }}
               onClick={hasSelection ? handleApply : onClose}
-              style={{
-                flex: 2, padding: '13px', borderRadius: 14,
-                border: 'none', cursor: 'pointer', fontFamily: 'inherit',
-                fontSize: 15, fontWeight: 800, color: '#ffffff',
-                background: applied
-                  ? 'linear-gradient(135deg, #166534, #16a34a)'
-                  : hasSelection
-                    ? `linear-gradient(135deg, ${N.navyMid} 0%, ${N.blueBright} 60%, ${N.navyMid} 100%)`
-                    : 'rgba(30,77,140,0.15)',
-                boxShadow: hasSelection ? '0 6px 24px rgba(37,99,176,0.28)' : 'none',
-                position: 'relative', overflow: 'hidden',
-                transition: 'background 0.3s',
-              }}>
+              style={{ flex: 2, padding: '13px', borderRadius: 14, border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 15, fontWeight: 800, color: '#ffffff', background: applied ? 'linear-gradient(135deg, #166534, #16a34a)' : hasSelection ? `linear-gradient(135deg, ${N.navyMid} 0%, ${N.blueBright} 60%, ${N.navyMid} 100%)` : 'rgba(30,77,140,0.15)', boxShadow: hasSelection ? '0 6px 24px rgba(37,99,176,0.28)' : 'none', position: 'relative', overflow: 'hidden', transition: 'background 0.3s' }}>
               {applied ? (
                 <span>✓ Filter Applied — Updating Results...</span>
               ) : hasSelection ? (
                 <>
                   <motion.div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.12) 50%, transparent 70%)', backgroundSize: '200% 100%' }}
                     animate={{ backgroundPosition: ['200% 0', '-200% 0'] }}
-                    transition={{ duration: 1.8, repeat: Infinity, ease: 'linear' }}
-                  />
+                    transition={{ duration: 1.8, repeat: Infinity, ease: 'linear' }} />
                   <span style={{ position: 'relative' }}>
                     Apply Filter — Show {selectedFields.length > 0 ? `${selectedFields.length} Field${selectedFields.length > 1 ? 's' : ''}` : ''}{selectedSubjects.length > 0 ? ` · ${selectedSubjects.length} Subject${selectedSubjects.length > 1 ? 's' : ''}` : ''} →
                   </span>
@@ -335,9 +279,7 @@ export default function UniversityCard({ university: u, index, onApplyFilter }: 
         <UniversityModal
           university={u}
           onClose={() => setShowModal(false)}
-          onApply={(fields, subjects) => {
-            onApplyFilter(fields, subjects);
-          }}
+          onApply={(fields, subjects) => onApplyFilter(fields, subjects)}
         />
       )}
 
@@ -382,34 +324,17 @@ export default function UniversityCard({ university: u, index, onApplyFilter }: 
           </div>
         </motion.div>
 
-        {/* Expanded Panel */}
+        {/* Expanded Panel — Intake + Deadline only */}
         <AnimatePresence>
           {expanded && (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.25 }} style={{ overflow: 'hidden' }}>
               <div style={{ background: 'linear-gradient(135deg, #f8faff 0%, #eef3fc 100%)', border: '1px solid rgba(30,77,140,0.12)', borderTop: 'none', borderRadius: '0 0 20px 20px', padding: '24px 28px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0 }}>
+
+                {/* Only Intake + Deadline */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 0 }}>
+
+                  {/* Intake */}
                   <div style={{ padding: '0 20px 0 0', borderRight: '1px solid rgba(30,77,140,0.10)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-                      <div style={{ width: 24, height: 24, borderRadius: 7, background: `linear-gradient(135deg, ${N.navyMid}, ${N.blueBright})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>📚</div>
-                      <span style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase' as const, letterSpacing: '0.12em', color: N.dim }}>Fields</span>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 4 }}>
-                      {u.fields.map(f => (
-                        <span key={f} style={{ fontSize: 11, fontWeight: 700, color: N.navy, lineHeight: 1.4 }}>{fieldIcons[f] || '•'} {f}</span>
-                      ))}
-                    </div>
-                  </div>
-                  <div style={{ padding: '0 20px', borderRight: '1px solid rgba(30,77,140,0.10)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-                      <div style={{ width: 24, height: 24, borderRadius: 7, background: 'linear-gradient(135deg, #166534, #16a34a)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>🎓</div>
-                      <span style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase' as const, letterSpacing: '0.12em', color: N.dim }}>Subjects</span>
-                    </div>
-                    <p style={{ fontSize: 12, color: 'rgba(10,31,68,0.70)', fontWeight: 500, margin: 0, lineHeight: 1.5 }}>
-                      {u.subjects.flatMap(s => s.subjects).slice(0, 4).join(', ')}
-                      {u.subjects.flatMap(s => s.subjects).length > 4 && ` +${u.subjects.flatMap(s => s.subjects).length - 4} more`}
-                    </p>
-                  </div>
-                  <div style={{ padding: '0 20px', borderRight: '1px solid rgba(30,77,140,0.10)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
                       <div style={{ width: 24, height: 24, borderRadius: 7, background: 'linear-gradient(135deg, #854d0e, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>🗓️</div>
                       <span style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase' as const, letterSpacing: '0.12em', color: N.dim }}>Intake</span>
@@ -420,6 +345,8 @@ export default function UniversityCard({ university: u, index, onApplyFilter }: 
                       ))}
                     </div>
                   </div>
+
+                  {/* Deadline */}
                   <div style={{ padding: '0 0 0 20px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
                       <div style={{ width: 24, height: 24, borderRadius: 7, background: 'linear-gradient(135deg, #92400e, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>⏰</div>
@@ -429,6 +356,7 @@ export default function UniversityCard({ university: u, index, onApplyFilter }: 
                   </div>
                 </div>
 
+                {/* Bottom bar */}
                 <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid rgba(30,77,140,0.10)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div style={{ display: 'flex', gap: 6 }}>
                     {['Eligible', 'International', 'Scholarships'].map(tag => (
@@ -436,7 +364,7 @@ export default function UniversityCard({ university: u, index, onApplyFilter }: 
                     ))}
                   </div>
                   <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-                    onClick={(e) => { e.stopPropagation(); setShowModal(true); }}
+                    onClick={e => { e.stopPropagation(); setShowModal(true); }}
                     style={{ padding: '8px 20px', borderRadius: 50, background: `linear-gradient(135deg, ${N.navyMid}, ${N.blueBright})`, color: '#ffffff', fontSize: 12, fontWeight: 800, cursor: 'pointer', boxShadow: '0 4px 14px rgba(37,99,176,0.28)' }}>
                     View Details →
                   </motion.div>
